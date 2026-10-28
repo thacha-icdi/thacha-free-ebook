@@ -19,7 +19,7 @@ document.querySelector('#chooseEbook').addEventListener('click',()=>ebookFile.cl
 ebookFile.addEventListener('change',()=>{
   const file=ebookFile.files[0];
   if(!file){ebookStatus.textContent='ยังไม่ได้เลือกไฟล์';return;}
-  if(!/\\.(pdf|epub)$/i.test(file.name)||file.size===0||file.size>20*1024*1024){
+  if(!/\.(pdf|epub)$/i.test(file.name)||file.size===0||file.size>20*1024*1024){
     ebookFile.value='';
     ebookStatus.textContent='กรุณาเลือก PDF หรือ EPUB ขนาดไม่เกิน 20 MB';
     return;
@@ -31,7 +31,7 @@ proposalForm.addEventListener('submit',async e=>{
   if(!proposalForm.reportValidity())return;
   const file=ebookFile.files[0];
   if(!file){proposalNotice.textContent='กรุณาเลือกไฟล์หนังสือก่อน';return;}
-  if(!/\\.(pdf|epub)$/i.test(file.name)||file.size===0||file.size>20*1024*1024){
+  if(!/\.(pdf|epub)$/i.test(file.name)||file.size===0||file.size>20*1024*1024){
     proposalNotice.textContent='ไฟล์ต้องเป็น PDF หรือ EPUB ขนาดไม่เกิน 20 MB';return;
   }
   const token=window.turnstile?.getResponse?.();
