@@ -3,7 +3,7 @@
 
 .detail-btn{background:none;border:0;padding:10px 0 0;color:var(--teal);font:inherit;font-size:13px;font-weight:600;cursor:pointer}.detail-btn:hover{text-decoration:underline}.book-dialog{border:0;border-radius:18px;padding:32px;width:min(94vw,560px);max-height:85vh;box-shadow:0 25px 80px #142a3b55;color:var(--ink);font:inherit}.book-dialog::backdrop{background:#142a3b99}.book-dialog h2{padding-right:30px}.book-dialog p{line-height:1.8;overflow-wrap:anywhere}.dialog-close{float:right;background:#edf4f2;border:0;border-radius:9px;padding:9px 13px;cursor:pointer}.proposal{display:grid;grid-template-columns:1fr 1fr;gap:14px;text-align:left;margin-top:28px}.proposal label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600}.proposal input:not([type=checkbox]),.proposal textarea,.proposal select{width:100%;border:1px solid var(--line);background:white;border-radius:9px;padding:12px;font:inherit;font-weight:400}.proposal .full{grid-column:1/-1}.proposal .agree{flex-direction:row;align-items:center;font-weight:400}.proposal button{border:0;cursor:pointer;margin:0;justify-content:center}.proposal .fine{margin:0}@media(max-width:600px){.proposal{grid-template-columns:1fr}.proposal label{grid-column:1/-1}}
 
-/* v2.1: polished submission form */
+/* v2.2: polished submission form */
 .submit{max-width:900px;padding:85px 24px}
 .proposal{max-width:780px;margin:30px auto 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 22px;text-align:left;background:#fff;border:1px solid var(--line);border-radius:18px;padding:30px;box-shadow:0 12px 35px #183b400a}
 .proposal label{display:flex;flex-direction:column;gap:9px;min-width:0;font-size:14px;font-weight:600;line-height:1.5;color:var(--ink)}

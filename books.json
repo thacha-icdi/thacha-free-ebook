@@ -2,7 +2,7 @@
   {
     "id": "sample-001",
     "title": "คู่มือเริ่มต้นการเรียนรู้",
-    "author": "ทีม Thacha Free E-Book",
+    "author": "ทีม E-Book Thacha",
     "category": "การศึกษา",
     "description": "ตัวอย่างการแสดงผลหนังสือ (ยังไม่มีไฟล์ให้ดาวน์โหลด)",
     "color": "#127d83",
@@ -14,7 +14,7 @@
   {
     "id": "sample-002",
     "title": "แนวคิดเพื่อการพัฒนาตนเอง",
-    "author": "ทีม Thacha Free E-Book",
+    "author": "ทีม E-Book Thacha",
     "category": "พัฒนาตนเอง",
     "description": "รายการสาธิตสำหรับทดสอบการค้นหาและหมวดหมู่",
     "color": "#c78d4b",
@@ -26,7 +26,7 @@
   {
     "id": "sample-003",
     "title": "ความรู้ดิจิทัลสำหรับทุกคน",
-    "author": "ทีม Thacha Free E-Book",
+    "author": "ทีม E-Book Thacha",
     "category": "เทคโนโลยี",
     "description": "ตัวอย่างหนังสือด้านเทคโนโลยีสำหรับการออกแบบเว็บไซต์",
     "color": "#29475c",
