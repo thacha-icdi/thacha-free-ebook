@@ -8,13 +8,61 @@ const dialog=document.querySelector('#bookDialog');
 document.querySelector('#closeDialog').addEventListener('click',()=>dialog.close());
 dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});
 function showDetails(b){const area=document.querySelector('#dialogContent');area.replaceChildren();const heading=document.createElement('h2');heading.id='dialogTitle';heading.textContent=b.title;area.append(heading);const fields=[['ผู้เขียน',b.author],['หมวดหมู่',b.category],['ปีเผยแพร่',b.year||'ไม่ระบุ'],['ISBN',b.isbn||'ไม่มี / ไม่ระบุ'],['ประเภทสิทธิ์',b.license||'ยังไม่ระบุ'],['รายละเอียด',b.description||'-']];for(const [label,value] of fields){const row=document.createElement('p');const strong=document.createElement('strong');strong.textContent=label+': ';row.append(strong,document.createTextNode(String(value)));area.append(row)}const url=safeURL(b.file);if(url){const a=document.createElement('a');a.className='cta';a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='อ่าน / ดาวน์โหลดฟรี ↗';area.append(a)}else{const p=document.createElement('p');p.textContent='ยังไม่มีไฟล์สำหรับอ่านหรือดาวน์โหลด';area.append(p)}dialog.showModal()}
-// เปลี่ยนอีเมลผู้ดูแลที่นี่ก่อนเปิดรับข้อเสนอจริง
-const ADMIN_EMAIL='thacha.l@icdi.cmu.ac.th';
-document.querySelector('#proposalForm').addEventListener('submit',e=>{e.preventDefault();const notice=document.querySelector('#proposalNotice');if(!ADMIN_EMAIL){notice.textContent='ยังไม่ได้ตั้งค่าอีเมลผู้ดูแล: กรุณาแก้ ADMIN_EMAIL ใน script.js ก่อนใช้งาน';return}const f=new FormData(e.currentTarget);const subject='เสนอหนังสือ: '+f.get('title');const body=['ชื่อหนังสือ: '+f.get('title'),'ผู้เขียน/เจ้าของสิทธิ์: '+f.get('author'),'อีเมลติดต่อ: '+f.get('email'),'สถานะสิทธิ์: '+f.get('rights'),'รายละเอียดหลักฐาน: '+f.get('evidence'),'','หมายเหตุ: โปรดรอผู้ดูแลติดต่อกลับก่อนส่งไฟล์หนังสือ'].join('\n');const a=document.createElement('a');a.href='mailto:'+encodeURIComponent(ADMIN_EMAIL)+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);a.click();notice.textContent='เปิดโปรแกรมอีเมลแล้ว กรุณาตรวจสอบและกดส่งอีเมลด้วยตนเอง';});
 
-// Static GitHub Pages: local file selection only; no upload is performed.
+const SUBMIT_ENDPOINT='https://qhestuqalhhjcccbtano.supabase.co/functions/v1/submit-ebook';
+const proposalForm=document.querySelector('#proposalForm');
 const ebookFile=document.querySelector('#ebookFile');
 const ebookStatus=document.querySelector('#ebookFileStatus');
+const proposalNotice=document.querySelector('#proposalNotice');
+const submitButton=document.querySelector('#submitEbook');
 document.querySelector('#chooseEbook').addEventListener('click',()=>ebookFile.click());
-ebookFile.addEventListener('change',()=>{const file=ebookFile.files[0];if(!file)return;const ok=/\.(pdf|epub)$/i.test(file.name);if(!ok){ebookFile.value='';ebookStatus.textContent='กรุณาเลือกไฟล์ PDF หรือ EPUB เท่านั้น';return}ebookStatus.textContent='เลือกไฟล์: '+file.name+' (ยังไม่ได้อัปโหลดหรือส่งไฟล์ กรุณารอผู้ดูแลติดต่อกลับ)';});
-document.querySelector('#cancelProposal').addEventListener('click',()=>{ebookFile.value='';ebookStatus.textContent='ยกเลิกแล้ว ไม่มีการอัปโหลดไฟล์';document.querySelector('#proposalNotice').textContent='';});
+ebookFile.addEventListener('change',()=>{
+  const file=ebookFile.files[0];
+  if(!file){ebookStatus.textContent='ยังไม่ได้เลือกไฟล์';return;}
+  if(!/\\.(pdf|epub)$/i.test(file.name)||file.size===0||file.size>20*1024*1024){
+    ebookFile.value='';
+    ebookStatus.textContent='กรุณาเลือก PDF หรือ EPUB ขนาดไม่เกิน 20 MB';
+    return;
+  }
+  ebookStatus.textContent='ไฟล์ที่เลือก: '+file.name+' ('+(file.size/1024/1024).toFixed(2)+' MB)';
+});
+proposalForm.addEventListener('submit',async e=>{
+  e.preventDefault();
+  if(!proposalForm.reportValidity())return;
+  const file=ebookFile.files[0];
+  if(!file){proposalNotice.textContent='กรุณาเลือกไฟล์หนังสือก่อน';return;}
+  if(!/\\.(pdf|epub)$/i.test(file.name)||file.size===0||file.size>20*1024*1024){
+    proposalNotice.textContent='ไฟล์ต้องเป็น PDF หรือ EPUB ขนาดไม่เกิน 20 MB';return;
+  }
+  const token=window.turnstile?.getResponse?.();
+  if(!token){proposalNotice.textContent='กรุณาผ่านการตรวจสอบ Turnstile ก่อนส่ง';return;}
+  const formData=new FormData(proposalForm);
+  formData.delete('confirm');
+  formData.set('file',file,file.name);
+  formData.set('turnstileToken',token);
+  submitButton.disabled=true;
+  submitButton.textContent='กำลังอัปโหลด...';
+  proposalNotice.textContent='กำลังส่งไฟล์ กรุณารอสักครู่';
+  try{
+    const response=await fetch(SUBMIT_ENDPOINT,{method:'POST',body:formData});
+    let data={};
+    try{data=await response.json();}catch{}
+    if(!response.ok||!data.success)throw new Error(data.error||'ไม่สามารถส่งหนังสือได้');
+    proposalNotice.textContent='ส่งหนังสือสำเร็จ! สถานะ: pending (รอผู้ดูแลตรวจสอบ)';
+    proposalForm.reset();
+    ebookFile.value='';
+    ebookStatus.textContent='ยังไม่ได้เลือกไฟล์';
+  }catch(err){
+    proposalNotice.textContent='อัปโหลดไม่สำเร็จ: '+(err?.message||'โปรดลองอีกครั้ง');
+  }finally{
+    window.turnstile?.reset?.();
+    submitButton.disabled=false;
+    submitButton.textContent='Upload E-Book ↑';
+  }
+});
+document.querySelector('#cancelProposal').addEventListener('click',()=>{
+  ebookFile.value='';
+  ebookStatus.textContent='ยกเลิกแล้ว ไม่มีการอัปโหลดไฟล์';
+  proposalNotice.textContent='';
+  window.turnstile?.reset?.();
+});
