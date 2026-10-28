@@ -15,7 +15,7 @@ const ebookFile=document.querySelector('#ebookFile');
 const ebookStatus=document.querySelector('#ebookFileStatus');
 const proposalNotice=document.querySelector('#proposalNotice');
 const submitButton=document.querySelector('#submitEbook');
-document.querySelector('#chooseEbook').addEventListener('click',()=>ebookFile.click());
+
 ebookFile.addEventListener('change',()=>{
   const file=ebookFile.files[0];
   if(!file){ebookStatus.textContent='ยังไม่ได้เลือกไฟล์';return;}
