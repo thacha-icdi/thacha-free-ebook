@@ -11,3 +11,10 @@ function showDetails(b){const area=document.querySelector('#dialogContent');area
 // เปลี่ยนอีเมลผู้ดูแลที่นี่ก่อนเปิดรับข้อเสนอจริง
 const ADMIN_EMAIL='thacha.l@icdi.cmu.ac.th';
 document.querySelector('#proposalForm').addEventListener('submit',e=>{e.preventDefault();const notice=document.querySelector('#proposalNotice');if(!ADMIN_EMAIL){notice.textContent='ยังไม่ได้ตั้งค่าอีเมลผู้ดูแล: กรุณาแก้ ADMIN_EMAIL ใน script.js ก่อนใช้งาน';return}const f=new FormData(e.currentTarget);const subject='เสนอหนังสือ: '+f.get('title');const body=['ชื่อหนังสือ: '+f.get('title'),'ผู้เขียน/เจ้าของสิทธิ์: '+f.get('author'),'อีเมลติดต่อ: '+f.get('email'),'สถานะสิทธิ์: '+f.get('rights'),'รายละเอียดหลักฐาน: '+f.get('evidence'),'','หมายเหตุ: โปรดรอผู้ดูแลติดต่อกลับก่อนส่งไฟล์หนังสือ'].join('\n');const a=document.createElement('a');a.href='mailto:'+encodeURIComponent(ADMIN_EMAIL)+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);a.click();notice.textContent='เปิดโปรแกรมอีเมลแล้ว กรุณาตรวจสอบและกดส่งอีเมลด้วยตนเอง';});
+
+// Static GitHub Pages: local file selection only; no upload is performed.
+const ebookFile=document.querySelector('#ebookFile');
+const ebookStatus=document.querySelector('#ebookFileStatus');
+document.querySelector('#chooseEbook').addEventListener('click',()=>ebookFile.click());
+ebookFile.addEventListener('change',()=>{const file=ebookFile.files[0];if(!file)return;const ok=/\.(pdf|epub)$/i.test(file.name);if(!ok){ebookFile.value='';ebookStatus.textContent='กรุณาเลือกไฟล์ PDF หรือ EPUB เท่านั้น';return}ebookStatus.textContent='เลือกไฟล์: '+file.name+' (ยังไม่ได้อัปโหลดหรือส่งไฟล์ กรุณารอผู้ดูแลติดต่อกลับ)';});
+document.querySelector('#cancelProposal').addEventListener('click',()=>{ebookFile.value='';ebookStatus.textContent='ยกเลิกแล้ว ไม่มีการอัปโหลดไฟล์';document.querySelector('#proposalNotice').textContent='';});
