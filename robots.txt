@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /thacha-free-ebook/admin.html
+
+Sitemap: https://thacha-icdi.github.io/thacha-free-ebook/sitemap.xml
