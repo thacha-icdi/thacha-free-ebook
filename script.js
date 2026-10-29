@@ -9,7 +9,7 @@ async function downloadApprovedBook(book,button){
     if(!response.ok||!data.url)throw Error(data.error||'ไม่สามารถสร้างลิงก์ได้');
     const url=new URL(data.url);
     if(url.protocol!=='https:'||url.hostname!=='qhestuqalhhjcccbtano.supabase.co')throw Error('ลิงก์ไฟล์ไม่ถูกต้อง');
-    const link=document.createElement('a');link.href=url.href;link.target='_blank';link.rel='noopener noreferrer';document.body.append(link);link.click();link.remove();
+    window.location.assign(url.href);
   }catch(error){alert('ดาวน์โหลดไม่สำเร็จ: '+error.message)}
   finally{button.disabled=false;button.textContent=original}
 }
