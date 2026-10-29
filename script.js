@@ -2,7 +2,20 @@ const grid=document.querySelector('#bookGrid'),search=document.querySelector('#s
 let books=[];
 function safeURL(value){if(!value)return '';try{const u=new URL(value,location.href);return ['https:','http:'].includes(u.protocol)?u.href:''}catch{return ''}}
 function render(){const q=search.value.trim().toLocaleLowerCase('th');const filtered=books.filter(b=>(category.value==='all'||b.category===category.value)&&[b.title,b.author,b.description,b.category].some(v=>String(v||'').toLocaleLowerCase('th').includes(q)));grid.replaceChildren();count.textContent=`${filtered.length} รายการ`;empty.hidden=filtered.length!==0;for(const b of filtered){const card=document.createElement('article');card.className='card';const cover=document.createElement('div');cover.className='cover';const inner=document.createElement('div');inner.className='cover-inner';inner.style.setProperty('--cover',/^#[0-9a-f]{6}$/i.test(b.color)?b.color:'#127d83');const name=document.createElement('span');name.textContent=b.title;const subtitle=document.createElement('small');subtitle.textContent='THACHA FREE E-BOOK';inner.append(name,subtitle);cover.append(inner);const body=document.createElement('div');body.className='card-body';const tag=document.createElement('div');tag.className='tag';tag.textContent=b.category;const title=document.createElement('h3');title.textContent=b.title;const author=document.createElement('div');author.className='author';author.textContent=`ผู้เขียน: ${b.author}`;const desc=document.createElement('p');desc.className='desc';desc.textContent=b.description||'';const details=document.createElement('button');details.type='button';details.className='detail-btn';details.textContent='ดูรายละเอียดหนังสือ →';details.addEventListener('click',()=>showDetails(b));const link=document.createElement('div');link.className='read';const url=safeURL(b.file);if(url){const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='อ่าน / ดาวน์โหลดฟรี ↗';link.append(a)}else{link.classList.add('disabled');link.textContent='ตัวอย่าง — ยังไม่เปิดให้อ่าน'}body.append(tag,title,author,desc,details,link);card.append(cover,body);grid.append(card)}}
-async function init(){try{const r=await fetch('books.json');if(!r.ok)throw Error('โหลดข้อมูลไม่สำเร็จ');const data=await r.json();if(!Array.isArray(data))throw Error('รูปแบบข้อมูลไม่ถูกต้อง');books=data;const categories=[...new Set(books.map(b=>b.category).filter(Boolean))].sort();for(const c of categories){const o=document.createElement('option');o.value=c;o.textContent=c;category.append(o)}render()}catch(e){empty.hidden=false;empty.textContent='ไม่สามารถโหลดรายการหนังสือได้ กรุณาเปิดผ่านเว็บไซต์หรือเซิร์ฟเวอร์ทดสอบ'}}search.addEventListener('input',render);category.addEventListener('change',render);document.querySelector('#year').textContent=new Date().getFullYear();init();
+async function init(){
+  try {
+    const endpoint='https://qhestuqalhhjcccbtano.supabase.co/rest/v1/ebooks?select=id,title,author,rights,status&status=eq.approved&order=created_at.desc';
+    const key='sb_publishable_1bHeqrj-glSovM-l-GZFgw_UStnvPO_';
+    const response=await fetch(endpoint,{headers:{'apikey':key}});
+    if(!response.ok)throw Error('ไม่สามารถอ่านรายการที่อนุมัติได้ ('+response.status+')');
+    const rows=await response.json();
+    if(!Array.isArray(rows))throw Error('ข้อมูลไม่ถูกต้อง');
+    books=rows.map(b=>({id:b.id,title:b.title,author:b.author,category:'หนังสือแบ่งปัน',description:'หนังสือที่ผู้ดูแลอนุมัติแล้ว',license:b.rights,color:'#127d83',file:''}));
+    render();
+    if(rows.length){const note=document.createElement('p');note.className='fine';note.textContent='ไฟล์ดาวน์โหลดยังไม่เปิดให้บริการจนกว่าจะตั้งค่าการเข้าถึงไฟล์ที่อนุมัติอย่างปลอดภัย';grid.before(note)}
+  }catch(e){books=[];render();empty.hidden=false;empty.textContent='ไม่สามารถโหลดรายการหนังสือที่อนุมัติจาก Supabase: '+e.message}
+}
+search.addEventListener('input',render);category.addEventListener('change',render);document.querySelector('#year').textContent=new Date().getFullYear();init();
 
 const dialog=document.querySelector('#bookDialog');
 document.querySelector('#closeDialog').addEventListener('click',()=>dialog.close());
