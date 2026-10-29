@@ -23,3 +23,21 @@
 .proposal .proposal-cancel{background:#f1f4f4;color:#32454d;border:1px solid #ccd9d9;border-radius:9px;padding:12px 24px;font:inherit;font-weight:600;cursor:pointer}
 .proposal .proposal-cancel:hover{background:#e1e9e8}
 @media(max-width:650px){.proposal .proposal-actions{flex-direction:column;align-items:stretch}.proposal .proposal-actions button{width:100%}}
+
+
+/* E-Book Thacha section colors: deep blue library, deep pink about, purple submission */
+.library{max-width:none;margin:0;background:linear-gradient(145deg,#07369b 0%,#0634ad 55%,#05267b 100%);padding:80px max(6%,calc((100% - 1180px)/2));color:#fff}
+.library .section-head h2,.library .section-head p,.library .eyebrow,.library .count{color:#fff}
+.library .search,.library select{color:#142a3b}
+.library .search{background:#fff}
+.library .search input{background:transparent;color:#142a3b}
+.library .empty{color:#fff}
+.library .card{color:#142a3b}
+.library .cta{background:#087f83;color:#fff}
+.about{background:#a51465;color:#fff}
+.about h2,.about .eyebrow,.about p{color:#fff}
+.submit{max-width:none;background:#4c079b;color:#fff;padding:80px 20px}
+.submit h2,.submit .eyebrow,.submit>p,.submit .fine{color:#fff}
+.submit .proposal{color:#142a3b}
+.submit .proposal p{color:#526872}
+@media(max-width:750px){.library{padding:55px 18px}.submit{padding:55px 18px}}
